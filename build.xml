@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="ClassifyMtf" default="ClassifyMtf" 
+  xmlns:if="ant:if"
+  xmlns:unless="ant:unless">
+  
+  <description>
+    An argument may include an absolute or relative path.  
+    If a path to a file is not specified, a global property value is applied.
+    Argument for a FileSet may contain an absolute file name or a string containing wildcard characters.
+    
+    Example usage:
+    
+        ant -lib /home/g/sf_gData_2015TaskNiem/mtf.datatype/lib/saxon96ee/saxon9ee.jar 
+          -DargXslFileSet="classifyEntity.xsl"
+
+    The following command displays main tasks and their description:
+
+        ant -projecthelp
+    
+    
+     --------------------------
+    -- author:  George Moyano --
+    -- version: 1.2.0         --
+    -- updated: Jun 2016      --
+     --------------------------
+  </description>
+  
+  <property name="mtf-6040.schema.main.dir" 
+    value=""/>
+  <property name="mtf-subset.schema.main.dir" value="${basedir}/target"/>
+  <property name="xsl-transformer" value=""/>
+ 
+  <macrodef name="timestamp.echo"> 
+    <attribute name="message" default=""/>    
+    <sequential> 
+      <local name="current.time" />
+      <tstamp> 
+        <format property="current.time" pattern="dd/MM/yyyy hh:mm:ss"/> 
+      </tstamp>          
+      <echo message="@{message} ${current.time}" />
+    </sequential> 
+  </macrodef>
+  
+  <macrodef name="getClassName">
+    <attribute name="xslFile"/>
+    <element name="call" implicit="yes"/>
+    <sequential>
+      <local name="xslFileName"/>
+      <local name="mtfClassName"/>
+      <basename property="xslFileName" file="@{xslFile}"/>
+      <echo message="$${xslFileName}: ${xslFileName}"/>
+      <loadresource property="mtfClassName">
+        <propertyresource name="xslFileName"/>
+        <filterchain>
+          <replaceregex pattern="([a-z]+)([A-Z][a-z]+)(\..+)" replace="\2" />
+        </filterchain>
+      </loadresource>
+      <echo message="$${mtfClassName}: ${mtfClassName}"/>
+      <call/>
+      
+    </sequential>
+  </macrodef>
+
+  <macrodef name="testSaxonClassPathMatch">
+    <sequential>
+      <local name="_saxonClassPathMatch"/>
+      <echo message="matching 'saxon' in Java ClassPath..."/>
+      <script language="javascript">
+        <![CDATA[
+        var arrayJavaClassPath = project.getProperty('java.class.path').split(':');
+        var keySaxonClassPathMatch = -1;
+        
+        for (key = 0; key < arrayJavaClassPath.length; ++key) {
+          value = arrayJavaClassPath[key];
+          if ( value.match(/saxon/i) ) {
+            keySaxonClassPathMatch = key;
+            break;
+          }
+        }
+        
+        if (keySaxonClassPathMatch != -1)
+          project.setProperty('_saxonClassPathMatch', arrayJavaClassPath[keySaxonClassPathMatch]);
+          else project.setProperty('_saxonClassPathMatch', 'Saxon NOT MATCHED in java.class.path');
+        ]]>
+      </script>
+      <echo message="$${_saxonClassPathMatch}: ${_saxonClassPathMatch}"/>
+      <echo>class path to Saxon may be provided via ant command-line agrument '-lib' for provider net.sf.saxon.TransformerFactoryImpl"</echo>
+      <echo message="$${xsl-transformer}: ${xsl-transformer}"/>
+      <fail message="Try: ant -lib ${xsl-transformer}">
+        <condition>
+          <contains string="${_saxonClassPathMatch}" substring="NOT MATCHED"/>
+        </condition>
+      </fail>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="xsl-transform">
+    <!--<attribute name="inFileDir" default="${mtf-6040.schema.main.dir}"/>-->
+    <attribute name="inFile"/>
+    <!--<attribute name="inFileSet" default="messages.xsd"/>-->
+    <attribute name="xslFile"/>
+    <attribute name="outFileDir"/>
+    <attribute name="outFileName"/>
+    <!--<attribute name="outFileNameExtension"/>-->
+    <sequential>
+      <local name="inFileDir"/>
+      <local name="xslFileDir"/>
+      <!--<local name="xslFileName"/>-->
+      <local name="xsdOutputFileName"/>
+      <!--<local name="mtfClassName"/>-->
+      <local name="inFile.available"/>
+      <local name="xslFile.available"/>
+      <local name="outFileDir.available"/>
+      <echo message="@@{inFile}: @{inFile}"/>
+      <echo message="@@{xslFile}: @{xslFile}"/>
+      <echo message="@@{outFileDir}: @{outFileDir}"/>
+      <fail message="[ERROR] File not available.  Confirm @{inFile}.">
+        <condition>
+          <not>
+            <available file="@{inFile}" />
+          </not>
+        </condition>
+      </fail>
+      <fail message="[ERROR] File not available.  Confirm @{xslFile}">
+        <condition>
+          <not>
+            <available file="@{xslFile}" />
+          </not>
+        </condition>
+      </fail>
+      <fail message="[ERROR] Directory not available.  Confirm @{outFileDir} ">
+        <condition>
+          <not>
+            <available file="@{outFileDir}" />
+          </not>
+        </condition>
+      </fail>
+      <dirname property="inFileDir" file="@{inFile}"/>
+      <echo message="$${inFileDir}: ${inFileDir}"/>
+      <dirname property="xslFileDir" file="@{xslFile}"/>
+      <echo message="$${xslFileDir}: ${xslFileDir}"/>
+<!--      <basename property="xslFileName" file="@{xslFile}"/>
+      <echo message="$${xslFileName}: ${xslFileName}"/>
+      <loadresource property="mtfClassName">
+        <propertyresource name="xslFileName"/>
+        <filterchain>
+          <!-\-<replaceregex pattern="([A-Z][a-z]+(?!.*[A-Z][a-z]+))" replace="\1" />-\->
+          <!-\-<replaceregex pattern="([A-Z].+)(?=\.)" replace="\1" />-\->
+          <replaceregex pattern="([a-z]+)([A-Z][a-z]+)(\..+)" replace="\2" />
+        </filterchain>
+      </loadresource>
+      <echo message="$${mtfClassName}: ${mtfClassName}"/>-->
+      <!--<echo message="@@{inFileSet}: @{inFileSet}"/>-->
+      <!--<echo message="@@{inFileDir}: @{inFileDir}"/>-->
+      <testSaxonClassPathMatch/>
+      <xslt
+        destdir="@{outFileDir}" force="true"
+        style="@{xslFile}" useimplicitfileset="false">
+        <param name="paramDocumentUri6040" expression="${inFileDir}"/>
+        <param name="paramTransformUriBase" expression="${xslFileDir}"/>
+        <chainedmapper>
+          <flattenmapper/>
+          <!--<mapper from="*" to="*_@{xslFileName}_output.@{outFileNameExtension}" type="glob"/>  -->
+          <mapper from="*" to="@{outFileName}" type="glob"/>  
+        </chainedmapper>
+        <classpath path="${xsl-transformer}"/>
+        <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+        <!--<fileset includes="@{inFileSet}" dir="@{inFileDir}"/>    -->   
+        <file file="@{inFile}"/>
+      </xslt>
+    </sequential>
+  </macrodef>
+  
+  <!-- A task restricted by processing one input file for each call may require an iterator
+    to process an unknown number of files.
+    The task <xslt> is an example, only one stylesheet may be passed for each call. -->
+  <macrodef name="iterateFileSet">
+    <attribute name="inXslFileList"/>
+    <element name="call" implicit="yes"/>
+    <sequential>
+      <local name="inXslFileList.item"/>
+      <local name="inXslFileList.queue"/>
+      <local name="inXslFileList.queue.hasItem"/>
+      <!--<echo message="iterateFileSet.@@{inXslFileList}: @{inXslFileList}"/>-->
+      <loadresource property="inXslFileList.item" unless:blank="@{inXslFileList}">
+        <concat>@{inXslFileList}</concat>
+        <filterchain>
+          <!--<replaceregex pattern="([^;]*).*" replace="\1" />-->
+          <replaceregex pattern="([^:]*).*" replace="\1" />
+        </filterchain>
+      </loadresource>
+      <!--<echo message="iterateFileSet.$${inXslFileList.item}: ${inXslFileList.item}"/>-->
+      <!--<xsl-transform xslFile="${inXslFileList.item}"/>-->
+      <call/>
+      
+      <!--<echo message="@@{inXslFileList}: @{inXslFileList}"/>-->
+      <condition property="inXslFileList.queue.hasItem">
+        <contains string="@{inXslFileList}" substring=":"/>
+      </condition>
+      <!--<echo message="$${inXslFileList.queue.hasItem}: ${inXslFileList.queue.hasItem}" />-->
+      <loadresource property="inXslFileList.queue" if:true="${inXslFileList.queue.hasItem}">
+        <concat>@{inXslFileList}</concat>
+        <filterchain>
+          <replaceregex pattern="[^:]*:(.*)" replace="\1" />
+        </filterchain>
+      </loadresource>
+      <!--<echo message="iterateFileSet.$${inXslFileList.queue}: ${inXslFileList.queue}"/>-->
+      
+      <iterateFileSet inXslFileList="${inXslFileList.queue}" if:true="${inXslFileList.queue.hasItem}">
+        <!--<echo message="iterateFileSet.iterateFileSet"/>-->
+        <call/>
+      </iterateFileSet>
+    </sequential>
+  </macrodef>
+  
+
+  <target name="ClassifyMtf"
+    description="Optional argument: [argXslFileSet] defaults to 'classify*.xsl'">
+    <local name="xslFileSet"/>
+    <condition property="xslFileSet" value="${argXslFileSet}" else="classify*.xsl">
+      <isset property="argXslFileSet"/>
+    </condition>
+    <fileset id="idXslFileSet" dir="${basedir}" includes="${xslFileSet}"/>
+<!--    <echo message="ClassifyMtf.$${idXslFileSet}: ${idXslFileSet}"/>-->
+    <echo message="ClassifyMtf.$${idXslFileSet}: ${toString:idXslFileSet}"/>
+    <pathconvert refid="idXslFileSet" property="XslFileList"/>
+    <echo message="ClassifyMtf.$${XslFileList}: ${XslFileList}"/>
+    <iterateFileSet inXslFileList="${XslFileList}" unless:blank="${XslFileList}">
+      <echo message="classifymtf.iterateFileSet.$${inXslFileList.item}: ${inXslFileList.item}"/>
+      <getClassName xslFile="${inXslFileList.item}">
+        <echo message="classifymtf.iterateFileSet.getClassName.$${mtfClassName}: ${mtfClassName}"/>
+        <xsl-transform 
+          inFile="${mtf-6040.schema.main.dir}/messages.xsd"
+          xslFile="${inXslFileList.item}"
+          outFileDir="${mtf-subset.schema.main.dir}"
+          outFileName="mtf${mtfClassName}.xsd"/>
+      </getClassName>
+    </iterateFileSet>
+    <!--<xsl-transform inFile="${mtf-6040.schema.main.dir}/messages.xsd" 
+      xslFile="/media/sf_gData/Project/TSOA/Schema/Product/2015TaskNiem/mtf.datatype/src/main/resources/transform/classifyUsmtf/classifyActivity.xsl"/>-->
+<!--    <iterateFileSet inXslFileList="${idXslFileSet}" unless:blank="${idXslFileSet}">
+      <echo message="$${inXslFileList.item}: ${inXslFileList.item}"/>
+    </iterateFileSet>-->
+  </target>
+
+  <target name="BEGIN">
+    <local name="jsTestString"/>
+    <timestamp.echo message=""/>
+    <echo message="$${ant.version}: ${ant.version}"/>
+    <echo message="$${basedir}: ${basedir}"/>
+    <echo message="$${ant.java.version}: ${ant.java.version}"/>
+    <echo message="$${ant.java.version}: ${ant.java.}"/>
+    <testSaxonClassPathMatch/>
+  </target>
+
+</project>

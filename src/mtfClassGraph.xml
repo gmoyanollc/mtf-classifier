@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Criteria for querying data components for globlization -->
+<!-- supercedes varCriterion declaration in globalization stylesheet -->
+<Class>
+    <!-- subclass node name has a dependency to the namespace prefix declared for the globalization stylesheet -->
+    <mtfactivity id="10" namespace="urn:mtf:mil:6040b:ensit:B.1.01.12:activity"
+        prefix="mtfactivity" schemaLocation="mtfActivity.xsd" >
+        <Criterion>Activity</Criterion>
+        <Criterion>Event</Criterion>
+        <Criterion>Exercise</Criterion>
+        <Criterion>Incident</Criterion>
+        <Criterion>Operation</Criterion>
+    </mtfactivity>
+    <mtfentity id="20" namespace="urn:mtf:mil:6040b:ensit:B.1.01.12:entity"
+        prefix="mtfentity" schemaLocation="mtfEntity.xsd">
+        <Criterion>Allegiance</Criterion>
+        <Criterion>Country</Criterion>
+        <Criterion>Echelon</Criterion>
+        <Criterion>Entity</Criterion>
+        <Criterion>Equipment</Criterion>
+        <Criterion>OrderOf</Criterion>
+        <Criterion>Originator</Criterion>
+        <Criterion>Organization</Criterion>
+        <Criterion>Target</Criterion>
+        <Criterion>Unit</Criterion>
+    </mtfentity>
+    <mtfidentifier id="30" namespace="urn:mtf:mil:6040b:ensit:B.1.01.12:identifier" 
+        prefix="mtfidentifier" schemaLocation="mtfIdentifier.xsd">
+        <Criterion>Code</Criterion>
+        <Criterion>CorrelationNumber</Criterion>
+        <Criterion>Database</Criterion>
+        <Criterion>Designator</Criterion>
+        <Criterion>Encyclopedia</Criterion>
+        <Criterion>FilingNumber</Criterion>
+        <Criterion>Identification</Criterion>
+        <Criterion>Identifier</Criterion>
+        <Criterion>IdType</Criterion>
+        <Criterion>Key</Criterion>
+        <Criterion>Nickname</Criterion>
+        <Criterion>Reference</Criterion>
+        <Criterion>Relationship</Criterion>
+        <Criterion>SerialNumber</Criterion>
+        <Criterion>SequenceNumber</Criterion>
+        <Criterion>Sidc</Criterion>
+        <Criterion>TargetNumber</Criterion>
+    </mtfidentifier>
+    <mtfintel id="40" namespace="urn:mtf:mil:6040b:ensit:B.1.01.12:intel"
+        prefix="mtfintel" schemaLocation="mtfIntel.xsd">
+        <Criterion>Intel</Criterion>
+    </mtfintel>
+    <mtflocation id="50" namespace="urn:mtf:mil:6040b:ensit:B.1.01.12:location"
+        prefix="mtflocation" schemaLocation="mtfLocation.xsd">
+        <Criterion>Altitude</Criterion>
+        <Criterion>Area</Criterion>
+        <Criterion>Elevation</Criterion>
+        <Criterion>Lat</Criterion>
+        <Criterion>Location</Criterion>
+        <Criterion>Long</Criterion>
+    </mtflocation>
+    <mtfmeasure id="60" namespace="">
+        <Criterion>Condition</Criterion>
+        <Criterion>DatumPlane</Criterion>
+        <Criterion>Direction</Criterion>
+        <Criterion>Effectiveness</Criterion>
+        <Criterion>Measure</Criterion>
+        <Criterion>Quantity</Criterion>
+        <Criterion>Speed</Criterion>
+        <Criterion>Status</Criterion>
+    </mtfmeasure>
+    <mtfmessage id="70" namespace="">
+        <Criterion>Message</Criterion>
+    </mtfmessage>
+    <mtfstructure id="80" namespace="urn:mtf:mil:6040b:ensit:B.1.01.12:structure"
+        prefix="mtfstructure" schemaLocation="mtfStructure.xsd">
+        <Criterion>BaseType</Criterion>
+        <Criterion>Character</Criterion>
+        <Criterion>Classification</Criterion>
+        <Criterion>CommunicationType</Criterion>
+        <Criterion>Date</Criterion>
+        <Criterion>DocumentType</Criterion>
+        <Criterion>ffirnFudn</Criterion>
+        <Criterion>ffseq</Criterion>
+        <Criterion>ffSeq</Criterion>
+        <Criterion>Field</Criterion>
+        <Criterion>InstructionsType</Criterion>
+        <Criterion>mtfid</Criterion>
+        <Criterion>Month</Criterion>
+        <Criterion>NotationType</Criterion>
+        <Criterion>Qualifier</Criterion>
+        <Criterion>segSeq</Criterion>
+        <Criterion>setid</Criterion>
+        <Criterion>setSeq</Criterion>
+        <Criterion>Security</Criterion>
+        <Criterion>SingleSuffix</Criterion>
+        <Criterion>Time</Criterion>
+        <Criterion>Year</Criterion>
+    </mtfstructure>
+    <mtftext id="90" namespace="urn:mtf:mil:6040b:ensit:B.1.01.12:text"
+        prefix="mtftext" schemaLocation="mtfText.xsd">
+        <Criterion>Amplification</Criterion>
+        <Criterion>Narrative</Criterion>
+        <Criterion>Remark</Criterion>
+        <Criterion>Text</Criterion>
+    </mtftext>
+</Class>
