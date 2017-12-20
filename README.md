@@ -1,4 +1,6 @@
-**mtf-classifier** extracts USMTF message data components represented in MIL-STD-6040 XML-MTF XML Schema files.  Furthermore, the military messaging standard XML representations are organized conceptually into subset XML Schema files for increased portability and re-use.
+**mtf-classifier** extracts USMTF message data components represented in MIL-STD-6040 XML-MTF XML Schema files.  
+
+XML representations for the military messaging standard are organized conceptually into subset XML Schema files for increased portability and re-use.
 
 XSL-3 Requirement
 ----------------
